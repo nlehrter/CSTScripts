@@ -24,8 +24,8 @@ def ACF_S21(data1,data2):
 
 #delay, magnitude = Transform_cst_data("../S21_Coax_variations.txt")
 
-S21_variations = CST_SParams("../S21_Coax_variations.txt")
-S21_10m = CST_SParams("../S21_Coax2.txt")
+S21_variations = CST_SParams("../data/S21_Coax_variations.txt")
+S21_10m = CST_SParams("../data/S21_Coax2.txt")
 
 print(type(S21_10m.x_data))
 cross_correl = ACF_S21((S21_variations.x_data, S21_variations.y_data),(S21_10m.x_data,S21_10m.y_data))
