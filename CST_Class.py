@@ -3,6 +3,7 @@ import scipy as sp
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy as np
+import control
 
 class CST_SParams:
     
@@ -16,13 +17,15 @@ class CST_SParams:
     def read_data(self,filename):
         with open(filename) as file:
             data = file.readlines()[2:]
-        
         x = []
         y = []
         for i in range(0,len(data)-1):
+            
             holding = re.findall("-*\d.{0,1}\d*",data[i])
             x.append(float(holding[0]))
             y.append(float(holding[1]))
+        if (np.mean(y[:1000]) < 0):
+            y = list(map(control.db2mag,y))
         return x,y
 
     def window_and_transform(self,x,y):
@@ -51,4 +54,13 @@ class CST_SParams:
         delay_window = sp.fft.ifft(y)[:N//2]
         
         return xT[:N//2],abs(delay_window.real)[:N//2]
+    
+    def zero_pad(self, scale_factor, writeback = False):
+        x = self.x_data
+        y = self.y_data
+        x.extend([(x[i]-x[0] + x[len(x)-1]) for i in range(0,int(len(x)*(scale_factor-1)))])
+        y.extend([0 for i in range(0,int(len(y)*(scale_factor-1)))])
+        
+        if (writeback == True):
+            self.__init__(None,x,y)
 
